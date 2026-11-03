@@ -21,6 +21,12 @@
 - [Специфікація (українською)](SPEC.md) — основна версія
 - [Specification (English)](SPEC.en.md)
 
+## Інструменти
+
+- [`python/`](python/) — еталонна бібліотека й командний рядок: створити сувій, перевірити, шукати, зробити й застосувати латку.
+- [`testdata/`](testdata/) — тестові сувої та контрольні значення хешів для інших реалізацій.
+- Бібліотека для Android/Kotlin — у розробці.
+
 ## Хто використовує
 
 - [Чинність](https://github.com/Marybezu/chynnist) — законодавство України офлайн для Android (у розробці).
@@ -48,6 +54,8 @@
 > **Status:** draft 0.1. The format may still change.
 
 **Documents:** [Specification (Ukrainian, primary)](SPEC.md) · [Specification (English)](SPEC.en.md)
+
+**Tools:** [`python/`](python/) — reference library and CLI (create, verify, search, diff, apply) · [`testdata/`](testdata/) — test scrolls and hash vectors · Android/Kotlin library — in progress.
 
 **Used by:** [Chynnist](https://github.com/Marybezu/chynnist) — Ukrainian legislation offline for Android (in development).
 

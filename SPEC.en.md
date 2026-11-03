@@ -215,7 +215,7 @@ Optional: `collection.description`, `collection.homepage`, `collection.license` 
 
 - The `fts` table is optional. If present, its `rowid` **MUST** equal `docs.id`, and `body` contains the document text without HTML markup.
 - If it is absent (for example, to make the file smaller), a reader **MAY** build the index itself.
-- A patch **SHOULD** include `fts` rows for its documents, so the reader does not have to index them again.
+- A contentless index (`content=''`) cannot be transferred from one file to another, so a patch **does NOT contain** `fts`. When applying a patch, the reader indexes its documents itself (section 12).
 
 ## 9. Integrity and signature
 
@@ -321,7 +321,7 @@ A patch can be applied to a base if:
 Applying is **a single transaction**:
 
 1. For each path in `tombstones`, delete the document with that path (together with its chunks, facets, toc, links and its `fts` row).
-2. For each document in the patch: delete the document with the same path, if present, and insert the new one with all its chunks, facets, toc, links and `fts` row. `id` numbers, like dictionary numbers, are assigned anew.
+2. For each document in the patch: delete the document with the same path, if present, and insert the new one with all its chunks, facets, toc and links. If the base has `fts`, add a row for the new document, computing its text without markup. `id` numbers, like dictionary numbers, are assigned anew.
 3. Copy the needed dictionaries from the patch (with new numbers).
 4. Replace the base's `meta` with the patch's metadata without the `patch.*` keys, with `suvii.kind = base` and `sign.sig = patch.base_sig`.
 5. Compute `state_root` and compare it with `patch.state_root`, and verify the updated base's signature (section 9.5). If anything does not match, **roll back the transaction**.

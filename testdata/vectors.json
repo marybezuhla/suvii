@@ -1,0 +1,49 @@
+{
+  "comment": "Контрольні значення для реалізацій формату Suvii 0.1 / test vectors for Suvii 0.1 implementations",
+  "public_key": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=",
+  "doc": {
+    "path": "laws/254к/96-вр",
+    "title": "Конституція України",
+    "mime": "text/html",
+    "updated": "2026-11-01T00:00:00Z",
+    "body": "<h2 id=\"st-1\">Стаття 1</h2><p>Україна є суверенна і незалежна, демократична, соціальна, правова держава.</p>",
+    "facets": [
+      [
+        "status",
+        "in_force"
+      ],
+      [
+        "kind",
+        "law"
+      ],
+      [
+        "adopted",
+        "1996-06-28"
+      ]
+    ],
+    "toc": [
+      [
+        1,
+        "st-1",
+        "Стаття 1"
+      ]
+    ],
+    "links": [],
+    "doc_hash": "245959fa2249ea19a87bae012b0608a483ef75bbe4ac78c881b6ce095d3bcdd5"
+  },
+  "base_1": {
+    "state_root": "4f177115a0246c88ffb4737db66891e3b984fbf5d3633c13ae1f19b91103c5fd",
+    "meta_hash": "daed465e5af5abd4bec0fdd0f9dbbf730741af977ca1d730142d1de6264fe5be",
+    "signature": "nxdNtSF45913z6VP3D5MsEKfVBIEMEP5ZqIJ1S7hxQHsbQaoGLjV+85nJDLy2BPKmW+w0BowOiNgZ2PEBk2FBA=="
+  },
+  "patch_1_2": {
+    "patch_root": "9cd94127d5510af161ee6e25b00cce1a34a9e50516af7c85da0122e7e1fa3615",
+    "meta_hash": "fed880e35813335ce2a61c4902dd22780d9e1ca2038c4b5f6859931add821070",
+    "expected_state_root": "7ab9467e3b3601ff7b903d082addfec23d89385b635fa8002d518dc0a208c5f1",
+    "signature": "1fnu0/iFdDcCde1Yh0VzQz7FsLfptd9HYv5S9puzAs++92oW29CnPKTAq7+WhRZjGvJbKfLSr8moEKrwTYGlDQ==",
+    "base_sig": "elyJUmy2L8mTgaDjM26tvS4JOvFW9zj3IOKYj9oZ9ks8esPorhD3B4h7KaSLvHgWl0WT9rSy+MFCMPZSUh1UCQ=="
+  },
+  "base_2": {
+    "state_root": "7ab9467e3b3601ff7b903d082addfec23d89385b635fa8002d518dc0a208c5f1"
+  }
+}

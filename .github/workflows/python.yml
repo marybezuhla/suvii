@@ -1,0 +1,42 @@
+name: python
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: python-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install
+        run: python -m pip install ./python[test]
+      - name: Test
+        working-directory: python
+        run: python -m pytest -q
+      - name: Test vectors are up to date
+        working-directory: python
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          python scripts/make_testdata.py "$tmp"
+          diff <(python -c "import json,sys;d=json.load(open('$tmp/vectors.json'));print(json.dumps(d,sort_keys=True))") \
+               <(python -c "import json,sys;d=json.load(open('../testdata/vectors.json'));print(json.dumps(d,sort_keys=True))")
