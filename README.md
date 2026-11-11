@@ -29,7 +29,7 @@
 
 ## Хто використовує
 
-- [Чинність](https://github.com/Marybezu/chynnist) — законодавство України офлайн для Android (у розробці).
+- [Чинність](https://github.com/marybezuhla/chynnist) — законодавство України офлайн для Android (у розробці).
 
 ## Ліцензія
 
@@ -57,6 +57,6 @@
 
 **Tools:** [`python/`](python/) — reference library and CLI (create, verify, search, diff, apply) · [`testdata/`](testdata/) — test scrolls and hash vectors · Android/Kotlin library — in progress.
 
-**Used by:** [Chynnist](https://github.com/Marybezu/chynnist) — Ukrainian legislation offline for Android (in development).
+**Used by:** [Chynnist](https://github.com/marybezuhla/chynnist) — Ukrainian legislation offline for Android (in development).
 
 **License:** specification text under [CC BY-SA 4.0](LICENSE-SPEC); code of the tools and libraries under [GPL-3.0-or-later](LICENSE). Provided "as is", without any warranty.
