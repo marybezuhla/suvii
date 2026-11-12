@@ -358,9 +358,10 @@ ZIM is only a read-only snapshot: the scroll itself is updated, and the ZIM is r
 ## Appendix A. Example: legislation of Ukraine
 
 - `collection.id`: a fixed UUID for the "Chynnist" collection.
-- Path: `laws/<document number on zakon.rada.gov.ua>`, e.g. `laws/254к/96-вр` (the Constitution).
-- `facets`: `kind`, `number`, `status`, `adopted`, `edition`, `issuer`.
-- `toc`: parts, chapters, articles; the anchor is the article number, e.g. `st-10`.
-- `links`: `amends` / `amended_by` — amendments between documents.
+- Path: `laws/<document number on zakon.rada.gov.ua>` in lower case, e.g. `laws/254к/96-вр` (the Constitution).
+- `facets`: `kind` (type, several values: `law`, `code_of_ukraine`, `constitution`…), `status` (`in_force`, `repealed`…), `number` (document number), `edition` (date of the edition). Later: `adopted`, `issuer`.
+- `toc`: part — level 1, chapter — 2, article — 3. The anchor is the same as on the Rada website, e.g. `n4188`, so links between documents (`suvii:laws/2341-14#n12`) lead where they lead on the website.
+- Classes: `suvii-center`, `suvii-right` (alignment), `suvii-note` (editorial notes `{…}`).
+- `links`: later `amends` / `amended_by` — amendments between documents.
 - `collection.source`: `https://data.rada.gov.ua` (Open Data Portal of the Verkhovna Rada of Ukraine).
 - `collection.license`: the Open Data Portal's terms: free use and redistribution with attribution to the source.
