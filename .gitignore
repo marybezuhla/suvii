@@ -6,3 +6,7 @@ dist/
 .pytest_cache/
 .venv/
 *.part
+
+# Gradle and Kotlin
+.gradle/
+.kotlin/

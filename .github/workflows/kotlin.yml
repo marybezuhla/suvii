@@ -1,0 +1,38 @@
+name: kotlin
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kotlin-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        with:
+          gradle-version: "8.14.3"
+      - name: Test
+        run: gradle -p kotlin test --no-daemon
+      # The Kotlin tests read scrolls exported to text; they must match testdata/*.suvii.
+      - name: Exported test data is up to date
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          python3 python/scripts/export_for_kotlin.py testdata "$tmp"
+          diff -r "$tmp" kotlin/src/test/resources

@@ -25,7 +25,7 @@
 
 - [`python/`](python/) — еталонна бібліотека й командний рядок: створити сувій, перевірити, шукати, зробити й застосувати латку.
 - [`testdata/`](testdata/) — тестові сувої та контрольні значення хешів для інших реалізацій.
-- Бібліотека для Android/Kotlin — у розробці.
+- [`kotlin/`](kotlin/) — ядро бібліотеки для Kotlin і Android: перевірка метаданих, хешів, підпису й безпечного HTML. Читання файлу на Android — у розробці.
 
 ## Хто використовує
 
@@ -55,7 +55,7 @@
 
 **Documents:** [Specification (Ukrainian, primary)](SPEC.md) · [Specification (English)](SPEC.en.md)
 
-**Tools:** [`python/`](python/) — reference library and CLI (create, verify, search, diff, apply) · [`testdata/`](testdata/) — test scrolls and hash vectors · Android/Kotlin library — in progress.
+**Tools:** [`python/`](python/) — reference library and CLI (create, verify, search, diff, apply) · [`testdata/`](testdata/) — test scrolls and hash vectors · [`kotlin/`](kotlin/) — Kotlin/Android core: metadata, hashes, signatures, safe HTML (reading files on Android in progress).
 
 **Used by:** [Chynnist](https://github.com/marybezuhla/chynnist) — Ukrainian legislation offline for Android (in development).
 
