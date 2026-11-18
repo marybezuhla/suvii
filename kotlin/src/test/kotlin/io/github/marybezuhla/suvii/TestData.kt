@@ -10,7 +10,7 @@ object TestData {
 
     val vectors: Map<String, Any?> by lazy {
         @Suppress("UNCHECKED_CAST")
-        Json(File(root, "testdata/vectors.json").readText()).parse() as Map<String, Any?>
+        Json.parse(File(root, "testdata/vectors.json").readText()) as Map<String, Any?>
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -40,79 +40,4 @@ object TestData {
     fun hex(text: String): ByteArray = ByteArray(text.length / 2) { text.substring(2 * it, 2 * it + 2).toInt(16).toByte() }
 
     fun hex(bytes: ByteArray): String = bytes.joinToString("") { "%02x".format(it) }
-}
-
-/** Just enough JSON for the test vectors; the library itself does not read JSON. */
-private class Json(private val s: String) {
-    private var i = 0
-
-    fun parse(): Any? = value().also { space(); require(i == s.length) { "trailing data" } }
-
-    private fun space() {
-        while (i < s.length && s[i].isWhitespace()) i++
-    }
-
-    private fun value(): Any? {
-        space()
-        return when (s[i]) {
-            '{' -> {
-                i++
-                val out = linkedMapOf<String, Any?>()
-                space()
-                if (s[i] == '}') return out.also { i++ }
-                while (true) {
-                    space()
-                    val key = string()
-                    space()
-                    require(s[i++] == ':')
-                    out[key] = value()
-                    space()
-                    if (s[i++] == '}') return out
-                }
-                @Suppress("UNREACHABLE_CODE") out
-            }
-            '[' -> {
-                i++
-                val out = mutableListOf<Any?>()
-                space()
-                if (s[i] == ']') return out.also { i++ }
-                while (true) {
-                    out += value()
-                    space()
-                    if (s[i++] == ']') return out
-                }
-                @Suppress("UNREACHABLE_CODE") out
-            }
-            '"' -> string()
-            't' -> true.also { i += 4 }
-            'f' -> false.also { i += 5 }
-            'n' -> null.also { i += 4 }
-            else -> {
-                val start = i
-                while (i < s.length && (s[i].isDigit() || s[i] in "+-.eE")) i++
-                s.substring(start, i).toLong()
-            }
-        }
-    }
-
-    private fun string(): String {
-        require(s[i++] == '"')
-        val out = StringBuilder()
-        while (true) {
-            val c = s[i++]
-            when (c) {
-                '"' -> return out.toString()
-                '\\' -> when (val e = s[i++]) {
-                    'n' -> out.append('\n')
-                    't' -> out.append('\t')
-                    'r' -> out.append('\r')
-                    'b' -> out.append('\b')
-                    'f' -> out.append('\u000c')
-                    'u' -> out.append(s.substring(i, i + 4).toInt(16).toChar()).also { i += 4 }
-                    else -> out.append(e)
-                }
-                else -> out.append(c)
-            }
-        }
-    }
 }
