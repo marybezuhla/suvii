@@ -19,7 +19,7 @@ class ScrollTest {
     private val testdata = generateSequence(File("").absoluteFile) { it.parentFile }.first { File(it, "testdata/base-1.suvii").exists() }
         .let { File(it, "testdata") }
 
-    private fun copy(name: String): File = File(testdata, name).copyTo(tmp.newFile(name), overwrite = true)
+    private fun copy(name: String): File = File(testdata, name).copyTo(File(tmp.newFolder(), name))
 
     private fun code(block: () -> Unit): String = assertThrows(SuviiException::class.java) { block() }.code
 
