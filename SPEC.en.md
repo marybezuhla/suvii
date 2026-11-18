@@ -289,6 +289,7 @@ A scroll is a file from someone else's hands. A reader **MUST**:
 
 1. Check `application_id` and `user_version`. If the major version is higher than supported, refuse with the explanation "a newer version of the program is needed".
 2. Open with `PRAGMA trusted_schema=OFF` and in defensive mode (`SQLITE_DBCONFIG_DEFENSIVE`), and open a distributed file read-only until its signature is verified.
+   Defensive mode is switched on where the SQLite library allows it. Some do not (for example, `androidx.sqlite` bundled on Android). Then the reader **MUST** open the scroll read-only and run only its own fixed statements: foreign SQL that rewrites the schema or the file's pages is exactly what defensive mode guards against.
 3. Check `sqlite_schema`: no triggers or views; the required tables have exactly the schema described here.
 4. Check the limits from section 11 **before** allocating memory for the data.
 5. Verify the signature (section 9.5).
