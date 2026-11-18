@@ -1,0 +1,71 @@
+name: Clean up old runs
+
+# Run by hand, after a release: removes every workflow run (with its logs and artifacts) and every
+# deployment record except those of the commit the latest release was built from, so only the
+# current version stays visible in Actions; and every branch but the default one, unless an open
+# pull request still uses it. Releases and tags are not touched: old releases and tags are deleted
+# by the owner on the Releases page. Cannot be undone.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Напишіть ТАК, щоб видалити старі запуски, записи розгортань і всі гілки, крім головної"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  clean:
+    if: github.event.inputs.confirm == 'ТАК' || github.event.inputs.confirm == 'так'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: write
+      deployments: write
+      pull-requests: read
+    steps:
+      - name: Remove runs and deployments of everything but the latest release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SELF: ${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # No release yet: nothing is kept
+          TAG="$(gh api "repos/$REPO/releases/latest" --jq .tag_name 2>/dev/null || true)"
+          KEEP=""
+          [ -n "$TAG" ] && KEEP="$(gh api "repos/$REPO/commits/$TAG" --jq .sha)"
+          echo "Keeping the runs of ${TAG:-nothing} (${KEEP:-none})."
+          runs=0; deps=0
+          # Runs: only finished ones; a build still going or waiting for approval (a release) is never touched
+          gh api --paginate "repos/$REPO/actions/runs?per_page=100" --jq '.workflow_runs[] | "\(.id) \(.head_sha) \(.status)"' > runs.txt
+          while read -r id sha status; do
+            [ "$id" = "$SELF" ] && continue
+            [ -n "$KEEP" ] && [ "$sha" = "$KEEP" ] && continue
+            [ "$status" != "completed" ] && { echo "Left as it is (not finished): run $id"; echo "$sha" >> busy.txt; continue; }
+            gh api -X DELETE "repos/$REPO/actions/runs/$id" >/dev/null 2>&1 && runs=$((runs+1)) || echo "::warning::run $id not deleted"
+          done < runs.txt
+          # Deployments: made inactive, then deleted
+          gh api --paginate "repos/$REPO/deployments?per_page=100" --jq '.[] | "\(.id) \(.sha)"' > deps.txt
+          touch busy.txt
+          while read -r id sha; do
+            [ -n "$KEEP" ] && [ "$sha" = "$KEEP" ] && continue
+            # The deployment of a build still waiting for approval stays with it
+            grep -qx "$sha" busy.txt && continue
+            gh api -X POST "repos/$REPO/deployments/$id/statuses" -f state=inactive >/dev/null 2>&1 || true
+            gh api -X DELETE "repos/$REPO/deployments/$id" >/dev/null 2>&1 && deps=$((deps+1)) || echo "::warning::deployment $id not deleted"
+          done < deps.txt
+          # Branches: all but the default one, and none an open pull request still comes from or goes to
+          MAIN="$(gh api "repos/$REPO" --jq .default_branch)"
+          gh api --paginate "repos/$REPO/pulls?state=open&per_page=100" --jq '.[] | .head.ref, .base.ref' | sort -u > open.txt
+          gh api --paginate "repos/$REPO/branches?per_page=100" --jq '.[].name' > branches.txt
+          branches=0
+          while read -r b; do
+            [ "$b" = "$MAIN" ] && continue
+            grep -qxF "$b" open.txt && { echo "Left as it is (open pull request): $b"; continue; }
+            gh api -X DELETE "repos/$REPO/git/refs/heads/$b" >/dev/null 2>&1 && branches=$((branches+1)) || echo "::warning::branch $b not deleted"
+          done < branches.txt
+          echo "Deleted $runs runs, $deps deployment records and $branches branches; kept those of ${TAG:-no release} and the branch $MAIN." | tee -a "$GITHUB_STEP_SUMMARY"
